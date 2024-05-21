@@ -22,7 +22,9 @@
     "react-dom": "18.2.0",
     "server-only": "^0.0.1",
     "superjson": "^2.2.1",
-    "zod": "^3.23.3"
+    "zod": "^3.23.3",
+    "pusher": "^5.2.0",
+    "pusher-js": "8.4.0-rc2"
   },
   "devDependencies": {
     "@types/eslint": "^8.56.2",
