@@ -1,16 +1,13 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import z from 'zod'
 import { getPusherInstance } from '~/lib/pusher/server';
 
 const pusherServer = getPusherInstance();
 
 export const userRouter = createTRPCRouter({
-  getExcessSessions: publicProcedure.input(z.object({
-    userId: z.string(),
-    currentSessionId: z.string()
-  })).query(async ({ input }) => {
-    const { userId, currentSessionId } = input;
+  getExcessSessions: protectedProcedure.query(async ({ ctx }) => {
+    const { userId, sessionId: currentSessionId } = ctx.auth;
 
     const { data: activeSessions } = await clerkClient.sessions.getSessionList({
       userId,
@@ -35,26 +32,26 @@ export const userRouter = createTRPCRouter({
       },
     });
 
-    // const revokeSessionsPromises = excessSessionsIds.map((sessionId) =>
-    //   clerkClient.sessions.revokeSession(sessionId),
-    // );
+    const revokeSessionsPromises = excessSessionsIds.map((sessionId) =>
+      clerkClient.sessions.revokeSession(sessionId),
+    );
 
-    // try {
-    //   await Promise.all(revokeSessionsPromises).then(async () => {
-    //     await pusherServer
-    //       .trigger("private-session", `evt::revoke-${userId}`, {
-    //         type: "session-revoked",
-    //         data: excessSessionsIds,
-    //       })
-    //       .then(() =>
-    //         console.debug("pusherServer.trigger", { details: "SUCCESS" }),
-    //       );
-    //   });
-    // } catch (error) {
-    //   console.error(error);
-    // } finally {
-    //   return {};
-    // }
+    try {
+      await Promise.all(revokeSessionsPromises).then(async () => {
+        await pusherServer
+          .trigger("private-session", `evt::revoke-${userId}`, {
+            type: "session-revoked",
+            data: excessSessionsIds,
+          })
+          .then(() =>
+            console.debug("pusherServer.trigger", { details: "SUCCESS" }),
+          );
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      return {};
+    }
   }),
 
 })
