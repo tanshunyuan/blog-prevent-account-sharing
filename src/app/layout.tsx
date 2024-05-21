@@ -8,7 +8,7 @@ import "~/styles/globals.css";
 export default function RootLayout(props: BaseChildrenProps) {
   const { children } = props
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html lang="en" className={`${GeistSans.variable}`} id="__next">
       <body>
         <RootProvider>
           {children}
