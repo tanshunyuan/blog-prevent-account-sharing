@@ -2,7 +2,8 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import z from 'zod'
 import { getPusherInstance } from '~/lib/pusher/server';
-import logger from "~/infrastructure/logger";
+import logger from "~/infrastructure/logger/logger-service";
+// import logger from "~/infrastructure/logger";
 
 const pusherServer = getPusherInstance();
 
@@ -58,11 +59,11 @@ export const userRouter = createTRPCRouter({
   getThings: publicProcedure.query(() => {
     console.log('what the fuck')
     // logger.debug('getThings.string', 'This is a string')
-    // logger.debug('getThings.object', {details: 'This is a object'})
+    // logger.debug('getThings.object', { details: 'This is a object' })
     logger.debug('getThings.object.innerObject', {
-      details: JSON.stringify({
+      details: {
         hello: 'updated this shit'
-      })
+      }
     })
     return {
       hello: "world",
