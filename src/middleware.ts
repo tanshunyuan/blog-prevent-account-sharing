@@ -8,13 +8,18 @@ export default clerkMiddleware((auth, req) => {
   if (req.nextUrl.pathname === ROUTE_PATHS.DEFAULT) {
     return NextResponse.redirect(new URL(ROUTE_PATHS.SIGNIN, req.url));
   }
-  if (!auth().userId) {
-    return auth().redirectToSignIn({
-      returnBackUrl: ROUTE_PATHS.SIGNIN
-    })
-  }
 
   if (isProtectedRoute(req)) auth().protect();
+
+  const isAuthenticatedUserAtPublicPages =
+    auth().userId &&
+    (req.nextUrl.pathname === ROUTE_PATHS.DEFAULT ||
+      req.nextUrl.pathname === ROUTE_PATHS.SIGNIN ||
+      req.nextUrl.pathname === ROUTE_PATHS.SIGNUP);
+  if (isAuthenticatedUserAtPublicPages) {
+    const orgSelection = new URL(ROUTE_PATHS.APP.DASHBOARD, req.url);
+    return NextResponse.redirect(orgSelection);
+  }
 });
 
 export const config = {
