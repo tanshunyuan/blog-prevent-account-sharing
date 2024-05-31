@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import { useClerk, useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { pusherClient } from "~/lib/pusher/client";
-import { ROUTE_PATHS } from "~/utils/route-paths";
+import { useUser } from "@clerk/nextjs";
 
-type UseSetupSessionChannelReturn = ReturnType<typeof useSetupSessionChannel>;
+import { useEffect, useState } from "react";
+import { pusherClient } from "~/lib/pusher/client";
+
 
 let didInitOne = false;
 export const useSetupSessionChannel = () => {
@@ -42,43 +40,3 @@ export const useSetupSessionChannel = () => {
   };
 };
 
-type UseRemoveExcessSessionsProps = UseSetupSessionChannelReturn;
-
-export const useRemoveExcessSessions = (
-  props: UseRemoveExcessSessionsProps,
-) => {
-  const { isReload, setIsReload, excessSessionIds } = props;
-  const { signOut, session: currentSession } = useClerk();
-  const router = useRouter();
-
-  const handleSignOutActions = useCallback(() => {
-    router.push(`${ROUTE_PATHS.SIGNIN}?forcedRedirect=true`);
-  }, [router]);
-
-  const handleSessionRemoval = useCallback(async () => {
-    try {
-      const hasExcess = excessSessionIds.length > 0;
-      const isCurrentSessionExcess =
-        hasExcess &&
-        currentSession &&
-        excessSessionIds.includes(currentSession.id);
-
-      if (!isCurrentSessionExcess) return;
-
-      await signOut(handleSignOutActions, {
-        sessionId: currentSession.id,
-      });
-    } catch (error) {
-      console.error("Error removing session:", error);
-    }
-  }, [currentSession, excessSessionIds, handleSignOutActions, signOut]);
-
-  useEffect(() => {
-    if (!isReload) return;
-    handleSessionRemoval();
-
-    return () => {
-      setIsReload(false);
-    };
-  }, [isReload, handleSessionRemoval, setIsReload]);
-};

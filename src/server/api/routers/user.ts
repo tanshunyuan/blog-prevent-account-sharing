@@ -1,6 +1,5 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import z from 'zod'
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { getPusherInstance } from '~/lib/pusher/server';
 
 const pusherServer = getPusherInstance();

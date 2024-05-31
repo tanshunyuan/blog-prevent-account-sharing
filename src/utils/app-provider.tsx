@@ -1,5 +1,6 @@
 'use client'
-import { useRemoveExcessSessions, useSetupSessionChannel } from "~/hooks/use-setup-session-management";
+import { useRemoveExcessSessions } from "~/hooks/use-remove-excess-sessions";
+import { useSetupSessionChannel } from "~/hooks/use-setup-session-management";
 import { api } from "~/trpc/react";
 import { type BaseChildrenProps } from "~/types/common";
 
