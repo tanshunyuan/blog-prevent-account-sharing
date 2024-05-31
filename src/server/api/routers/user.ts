@@ -54,4 +54,9 @@ export const userRouter = createTRPCRouter({
     }
   }),
 
+  getThings: protectedProcedure.query(() => {
+    return {
+      hello: "world",
+    };
+  }),
 })
