@@ -8,12 +8,20 @@ import { ROUTE_PATHS } from "~/utils/route-paths";
 
 
 const useHandleSignOut = () => {
+  const { signOut } = useClerk();
   const router = useRouter();
-  return () => router.push(`${ROUTE_PATHS.SIGNIN}?forcedRedirect=true`);
+
+  return async (currentSessionId: string) => {
+    await signOut(() => {
+      router.push(`${ROUTE_PATHS.SIGNIN}?forcedRedirect=true`);
+    }, {
+      sessionId: currentSessionId
+    })
+  }
 };
 
 const useHandleSessionRemoval = () => {
-  const { signOut, session: currentSession } = useClerk();
+  const { session: currentSession } = useClerk();
   const handleSignOut = useHandleSignOut();
 
   return async (excessSessionIds: string[]) => {
@@ -24,9 +32,7 @@ const useHandleSessionRemoval = () => {
 
       if (!isCurrentSessionExcess) return;
 
-      await signOut(handleSignOut, {
-        sessionId: currentSession.id,
-      });
+      await handleSignOut(currentSession.id);
     } catch (error) {
       console.error('Error removing session:', error);
     }
