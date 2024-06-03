@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@clerk/nextjs": "^5.0.12",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tanstack/react-query": "^5.25.0",
     "@trpc/client": "next",
@@ -17,8 +18,11 @@
     "@trpc/server": "next",
     "geist": "^1.3.0",
     "next": "^14.2.1",
+    "pusher": "^5.2.0",
+    "pusher-js": "8.4.0-rc2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hot-toast": "^2.4.1",
     "server-only": "^0.0.1",
     "superjson": "^2.2.1",
     "zod": "^3.23.3"
